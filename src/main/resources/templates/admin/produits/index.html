@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(~{::section})}">
+    <section>
+        <h1>Produits</h1>
+        <a th:href="@{/admin/produits/nouveau}">Nouveau produit</a>
+
+        <table>
+            <tr>
+                <th>Nom</th>
+                <th>Catégorie</th>
+                <th>Actif</th>
+                <th>Actions</th>
+            </tr>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.category}"></td>
+                <td th:text="${product.active} ? 'Oui' : 'Non'"></td>
+                <td>
+                    <a th:href="@{/admin/produits/{id}/modifier(id=${product.id})}">Modifier</a>
+
+                    <form th:action="@{/admin/produits/{id}/supprimer(id=${product.id})}"
+                          method="post">
+                        <button type="submit">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </section>
+</div>
+</body>
+</html>

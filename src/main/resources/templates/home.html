@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(~{::section})}">
+    <section>
+        <h1>Bienvenue</h1>
+        <ul>
+            <li th:each="product : ${products}" th:text="${product.name}"></li>
+        </ul>
+    </section>
+</div>
+</body>
+</html>

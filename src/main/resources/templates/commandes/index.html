@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(~{::section})}">
+    <section>
+        <h1>Ma feuille de commande</h1>
+
+        <form th:action="@{/commandes}" method="post">
+
+            <div th:each="category : ${productsByCategory}">
+                <h2 th:text="${category.key}"></h2>
+
+                <table>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Quantité</th>
+                    </tr>
+                    <tr th:each="product : ${category.value}">
+                        <td th:text="${product.name}"></td>
+                        <td>
+                            <input type="number"
+                                   th:name="'product_' + ${product.id}"
+                                   th:value="${quantities[product.id]}"
+                                   min="0"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <button type="submit">Enregistrer</button>
+        </form>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(~{::section})}">
+    <section>
+        <h1 th:text="${client.id} ? 'Modifier le client' : 'Nouveau client'"></h1>
+
+        <form th:action="${client.id} ? @{/admin/clients/{id}(id=${client.id})} : @{/admin/clients}"
+              method="post">
+
+            <input type="text" name="name" th:value="${client.name}" placeholder="Nom"/>
+            <input type="email" name="email" th:value="${client.email}" placeholder="Email"/>
+            <input type="password" name="password" placeholder="Mot de passe (laisser vide pour ne pas changer)"/>
+
+            <h3>Produits accessibles</h3>
+            <div th:each="product : ${allProducts}">
+                <label>
+                    <input type="checkbox"
+                           name="productIds"
+                           th:value="${product.id}"
+                           th:checked="${client.accessibleProducts.contains(product)}"/>
+                    <span th:text="${product.name}"></span>
+                    <small th:text="${product.category}"></small>
+                </label>
+            </div>
+
+            <button type="submit">Enregistrer</button>
+            <a th:href="@{/admin/clients}">Annuler</a>
+        </form>
+    </section>
+</div>
+</body>
+</html>

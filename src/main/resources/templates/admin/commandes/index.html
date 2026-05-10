@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="~{layout/base :: layout(~{::section})}">
+    <section>
+        <h1>Récapitulatif des commandes</h1>
+
+        <a th:href="@{/admin/commandes/export}">Exporter en Excel</a>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Produit</th>
+                <th th:each="client : ${clients}" th:text="${client.name}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="product : ${products}">
+                <td th:text="${product.name}"></td>
+                <td th:each="client : ${clients}">
+                <td th:each="client : ${clients}"
+                    th:with="qty=${quantities[client.id] != null ? quantities[client.id][product.id] : null}"
+                    th:text="${qty != null ? qty : '-'}">
+                </td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+</body>
+</html>
