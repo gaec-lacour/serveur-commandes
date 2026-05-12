@@ -1,11 +1,11 @@
-.fixed-table {
-    table-layout: fixed;
-    width: 100%;
+.table-boeuf td {
+    background-color: #bfdbfe;
 }
 
-.fixed-table th,
-.fixed-table td {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.table-veau td {
+    background-color: #fde68a;
+}
+
+.table-porc td {
+    background-color: #e9d5ff;
 }

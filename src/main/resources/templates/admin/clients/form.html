@@ -3,10 +3,16 @@
 <body>
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
-        <h1 th:text="${client.id} ? 'Modifier le client' : 'Nouveau client'"></h1>
-
         <form th:action="${client.id} ? @{/admin/clients/{id}(id=${client.id})} : @{/admin/clients}"
               method="post">
+            <div class="d-flex align-items-center mb-3">
+                <h1 class="me-auto"
+                    th:text="${client.id} ? 'Modifier le client' : 'Nouveau client'"></h1>
+                <button class="btn btn-primary me-1" type="submit">Enregistrer</button>
+                <a class="btn btn-danger" th:href="@{/admin/clients}">Annuler</a>
+            </div>
+
+
 
             <input type="text" name="name" th:value="${client.name}" placeholder="Nom"/>
             <input type="email" name="email" th:value="${client.email}" placeholder="Email"/>
@@ -23,9 +29,6 @@
                     <small th:text="${product.category}"></small>
                 </label>
             </div>
-
-            <button type="submit">Enregistrer</button>
-            <a th:href="@{/admin/clients}">Annuler</a>
         </form>
     </section>
 </div>

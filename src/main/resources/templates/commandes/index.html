@@ -13,7 +13,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="mb-0">Ma feuille de commande</h1>
 
-                    <button class="btn btn-primary" type="submit">
+                    <button class="btn btn-primary btn-save" type="submit">
                         Enregistrer
                     </button>
                 </div>
@@ -55,7 +55,43 @@
             </form>
 
         </div>
+        <script>
+            let modified = false;
+            let allowExit = false;
 
+            const form = document.querySelector('form');
+
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    modified = true;
+                });
+            });
+
+            document.querySelector('.btn-save').addEventListener('click', () => {
+                allowExit = true;
+                modified = false;
+            });
+
+
+            window.addEventListener('beforeunload', function(e) {
+                if (modified && !allowExit) {
+                    e.preventDefault();
+                }
+            });
+
+            document.querySelectorAll('a, button[type="submit"]:not(.btn-save)').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    if (modified ) {
+                        if (!confirm('Vous avez des modifications non enregistrées. Quitter quand même ?')) {
+                            e.preventDefault();
+                        } else {
+                            modified = false;
+                        }
+                    }
+                });
+            });
+
+        </script>
     </section>
 </div>
 

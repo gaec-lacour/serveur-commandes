@@ -30,7 +30,7 @@ public class AdminUserController {
     @GetMapping("/nouveau")
     public String create(Model model) {
         model.addAttribute("client", new User());
-        model.addAttribute("allProducts", productService.getActiveProducts());
+        model.addAttribute("allProducts", productService.getAllProducts());
         return "admin/clients/form";
     }
 
@@ -46,7 +46,7 @@ public class AdminUserController {
     @GetMapping("/{id}/modifier")
     public String edit(@PathVariable Long id, Model model) {
         model.addAttribute("client", userService.getById(id));
-        model.addAttribute("allProducts", productService.getActiveProducts());
+        model.addAttribute("allProducts", productService.getAllProducts());
         return "admin/clients/form";
     }
 

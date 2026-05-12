@@ -12,15 +12,11 @@
             <input type="text" name="name" th:value="${product.name}" placeholder="Nom"/>
 
             <select name="category">
-                <option value="boeuf"  th:selected="${product.category == 'boeuf'}">Bœuf</option>
-                <option value="veau"   th:selected="${product.category == 'veau'}">Veau</option>
-                <option value="porc"   th:selected="${product.category == 'porc'}">Porc</option>
+                <option value="boeuf"  th:selected="${product.category == 'Boeuf'}">Bœuf</option>
+                <option value="veau"   th:selected="${product.category == 'Veau'}">Veau</option>
+                <option value="porc"   th:selected="${product.category == 'Porc'}">Porc</option>
             </select>
 
-            <label>
-                <input type="checkbox" name="active" th:checked="${product.active}" value="true"/>
-                Actif
-            </label>
 
             <button type="submit">Enregistrer</button>
             <a th:href="@{/admin/produits}">Annuler</a>

@@ -10,14 +10,14 @@
     <div class="d-flex align-items-center gap-1 mb-3" sec:authorize="isAuthenticated()">
 
         <!-- Uniquement pour l'admin -->
+        <a class="btn btn-primary" sec:authorize="hasRole('ADMIN')" th:href="@{/admin/commandes}">Commandes</a>
         <a class="btn btn-primary" sec:authorize="hasRole('ADMIN')" th:href="@{/admin/produits}">Produits</a>
         <a class="btn btn-primary" sec:authorize="hasRole('ADMIN')" th:href="@{/admin/clients}">Clients</a>
-        <a class="btn btn-primary" sec:authorize="hasRole('ADMIN')" th:href="@{/admin/commandes}">Commandes</a>
 
-        <a class="btn btn-primary" sec:authorize="hasRole('CLIENT')" th:href="@{/commandes}">Commandes</a>
+        <!--<a class="btn btn-primary" sec:authorize="hasRole('CLIENT')" th:href="@{/commandes}">Commandes</a>-->
         <!-- Pour tout le monde connecté -->
-        <form th:action="@{/logout}" method="post">
-            <button class="btn btn-primary" type="submit">
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button class="btn btn-primary logout-btn" type="submit">
                 Déconnexion
             </button>
         </form>

@@ -23,9 +23,6 @@ public class Product {
     @Column(nullable = false)
     private String category; //"boeuf", "veau", "porc"
 
-    @Column(nullable = false)
-    private boolean active = true;
-
     @ManyToMany(mappedBy = "accessibleProducts")
     private List<User> users = new ArrayList<>();
 }

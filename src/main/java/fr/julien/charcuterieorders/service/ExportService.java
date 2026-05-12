@@ -24,7 +24,7 @@ public class ExportService {
 
     public byte[] exportCommandes() throws IOException {
         List<User> clients = userService.getAllClients();
-        List<Product> products = productService.getActiveProducts();
+        List<Product> products = productService.getAllProducts();
         List<OrderItem> items = orderItemService.getAll();
 
         // Index quantités par userId → productId

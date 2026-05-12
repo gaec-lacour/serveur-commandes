@@ -9,6 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 @RequestMapping("/admin/produits")
 @RequiredArgsConstructor
@@ -18,9 +22,12 @@ public class AdminProductController {
 
     @GetMapping
     public String index(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+        Map<String, List<Product>> productsByCategory = productService.getAllProducts()
+                .stream()
+                .collect(Collectors.groupingBy(Product::getCategory));
+        model.addAttribute("productsByCategory",
+                productService.groupByCategory(productService.getAllProducts()));
         return "admin/produits/index";
-
     }
     @GetMapping("/nouveau")
     public String create(Model model) {

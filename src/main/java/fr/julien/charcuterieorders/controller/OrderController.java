@@ -4,6 +4,7 @@ import fr.julien.charcuterieorders.model.OrderItem;
 import fr.julien.charcuterieorders.model.Product;
 import fr.julien.charcuterieorders.model.User;
 import fr.julien.charcuterieorders.service.OrderItemService;
+import fr.julien.charcuterieorders.service.ProductService;
 import fr.julien.charcuterieorders.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ public class OrderController {
 
     private final UserService userService;
     private final OrderItemService orderItemService;
+    private final ProductService productService;
 
     @GetMapping
     public String index(Model model,
@@ -37,8 +40,8 @@ public class OrderController {
         // Produits accessibles groupés par catégorie
         Map<String, List<Product>> productsByCategory = user.getAccessibleProducts()
                 .stream()
+                .sorted(Comparator.comparing(Product::getName))
                 .collect(Collectors.groupingBy(Product::getCategory));
-
         // Quantités existantes indexées par productId pour affichage facile
         Map<Long, Integer> quantities = orderItemService.getByUser(user)
                 .stream()
@@ -47,8 +50,8 @@ public class OrderController {
                         OrderItem::getQuantity
                 ));
 
-        model.addAttribute("productsByCategory", productsByCategory);
-        model.addAttribute("quantities", quantities);
+        model.addAttribute("productsByCategory",
+                productService.groupByCategory(user.getAccessibleProducts()));model.addAttribute("quantities", quantities);
         return "commandes/index";
     }
 
