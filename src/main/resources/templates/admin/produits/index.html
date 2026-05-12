@@ -3,10 +3,15 @@
 <body>
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
-        <h1>Produits</h1>
-        <a th:href="@{/admin/produits/nouveau}">Nouveau produit</a>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Produits</h1>
+            <a class="btn btn-primary"
+               th:href="@{/admin/produits/nouveau}">
+                Nouveau produit
+            </a>
+        </div>
 
-        <table>
+        <table class="table table-striped table-hover table-bordered align-middle">
             <tr>
                 <th>Nom</th>
                 <th>Catégorie</th>
@@ -18,12 +23,14 @@
                 <td th:text="${product.category}"></td>
                 <td th:text="${product.active} ? 'Oui' : 'Non'"></td>
                 <td>
-                    <a th:href="@{/admin/produits/{id}/modifier(id=${product.id})}">Modifier</a>
+                    <div class="d-flex align-items-center gap-1 mb-3">
+                        <a class="btn btn-primary" th:href="@{/admin/produits/{id}/modifier(id=${product.id})}">Modifier</a>
 
-                    <form th:action="@{/admin/produits/{id}/supprimer(id=${product.id})}"
-                          method="post">
-                        <button type="submit">Supprimer</button>
-                    </form>
+                        <form th:action="@{/admin/produits/{id}/supprimer(id=${product.id})}"
+                              method="post">
+                            <button class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         </table>

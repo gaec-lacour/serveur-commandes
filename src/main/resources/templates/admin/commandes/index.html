@@ -3,11 +3,12 @@
 <body>
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
-        <h1>Récapitulatif des commandes</h1>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Récapitulatif des commandes</h1>
 
-        <a th:href="@{/admin/commandes/export}">Exporter en Excel</a>
-
-        <table>
+            <a class="btn btn-primary" th:href="@{/admin/commandes/export}">Exporter en Excel</a>
+        </div>
+        <table class="table table-striped table-hover table-bordered align-middle">
             <thead>
             <tr>
                 <th>Produit</th>
@@ -17,11 +18,11 @@
             <tbody>
             <tr th:each="product : ${products}">
                 <td th:text="${product.name}"></td>
-                <td th:each="client : ${clients}">
+
                 <td th:each="client : ${clients}"
-                    th:with="qty=${quantities[client.id] != null ? quantities[client.id][product.id] : null}"
-                    th:text="${qty != null ? qty : '-'}">
-                </td>
+                    th:text="${quantities[client.id] != null && quantities[client.id][product.id] != null
+            ? quantities[client.id][product.id]
+            : '-'}">
                 </td>
             </tr>
             </tbody>

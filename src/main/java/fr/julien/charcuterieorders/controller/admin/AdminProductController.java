@@ -3,9 +3,11 @@ package fr.julien.charcuterieorders.controller.admin;
 import fr.julien.charcuterieorders.model.Product;
 import fr.julien.charcuterieorders.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/produits")
@@ -46,8 +48,14 @@ public class AdminProductController {
     }
 
     @PostMapping("/{id}/supprimer")
-    public String delete(@PathVariable Long id) {
-        productService.delete(id);
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            productService.delete(id);
+            redirectAttributes.addFlashAttribute("success", "Produit supprimé.");
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error",
+                    "Impossible de supprimer ce produit : il est encore associé à des clients.");
+        }
         return "redirect:/admin/produits";
     }
 }

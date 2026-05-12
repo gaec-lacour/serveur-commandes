@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface OrderItemRepository extends JpaRepository <OrderItem, OrderItemId> {
     List<OrderItem> findByUser(User user);
+    void deleteByUser(User user);
 }

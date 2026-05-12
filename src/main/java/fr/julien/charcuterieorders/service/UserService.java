@@ -1,7 +1,9 @@
 package fr.julien.charcuterieorders.service;
 
 import fr.julien.charcuterieorders.model.User;
+import fr.julien.charcuterieorders.repository.OrderItemRepository;
 import fr.julien.charcuterieorders.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import java.util.List;
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
-
+    private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
 
     public List<User> getAllClients() {
@@ -44,10 +46,12 @@ public class UserService {
         existing.setAccessibleProducts(form.getAccessibleProducts());
         return userRepository.save(existing);
     }
+    @Transactional
     public void delete(Long id) {
-        userRepository.deleteById(id);
+        User user = getById(id);
+        orderItemRepository.deleteByUser(user);  // supprime les commandes d'abord
+        userRepository.deleteById(id);           // puis le client
     }
-
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
