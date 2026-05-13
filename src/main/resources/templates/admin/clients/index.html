@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/base :: head"></head>
+
 <body>
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
