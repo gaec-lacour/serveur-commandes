@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<body>
-<div th:fragment="layout(content)">
+
+
     <head>
+        <div th:fragment="head">
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" th:href="@{/css/style.css}">
+        </div>
     </head>
+    <body>
+    <div th:fragment="layout(content)">
     <h1 class="display-1 text-center fw-bold">GAEC LACOUR</h1>
     <nav th:replace="~{layout/navbar :: navbar}"></nav>
     <main class="container mt-4">
