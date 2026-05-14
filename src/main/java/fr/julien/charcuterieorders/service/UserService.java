@@ -43,6 +43,8 @@ public class UserService {
             existing.setPassword(passwordEncoder.encode(form.getPassword()));
         }
 
+        existing.setInputMode(form.getInputMode());
+
         existing.setAccessibleProducts(form.getAccessibleProducts());
         return userRepository.save(existing);
     }

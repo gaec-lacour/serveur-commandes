@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="layout/base :: head"></head>
+<head th:replace="~{layout/base :: head}"></head>
 
 <body>
 <div th:replace="~{layout/base :: layout(~{::section})}">
@@ -35,10 +35,25 @@
                 th:classappend="${product.category == 'boeuf'} ? 'table-boeuf' : (${product.category == 'veau'} ? 'table-veau' : 'table-porc')">
                 <td th:text="${product.name}"></td>
 
-                <td th:each="client : ${clients}"
-                    th:text="${quantities[client.id] != null && quantities[client.id][product.id] != null
-            ? quantities[client.id][product.id]
-            : '-'}">
+                <td th:each="client : ${clients}">
+
+                    <form th:action="@{/admin/commandes/decrement}"
+                          method="post">
+
+                        <input type="hidden" name="userId" th:value="${client.id}">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input type="hidden" name="seulementCommandes" th:value="${seulementCommandes}">
+
+                        <button type="submit"
+                                class="btn btn-link p-0 text-decoration-none"
+                                th:disabled="${client.inputMode != 'ORDER'}"
+                                th:text="${draftQuantities[client.id] != null && draftQuantities[client.id][product.id] != null
+                    ? draftQuantities[client.id][product.id]
+                    : '-'}">
+                        </button>
+
+                    </form>
+
                 </td>
             </tr>
             </tbody>

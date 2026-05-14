@@ -13,19 +13,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/commandes")
 @RequiredArgsConstructor
+@SessionAttributes("draftQuantities")
+
 public class AdminOrderController {
 
     private final UserService userService;
@@ -33,18 +30,38 @@ public class AdminOrderController {
     private final OrderItemService orderItemService;
     private final ExportService exportService;
 
+    @ModelAttribute("draftDirty")
+    public Boolean draftDirty() {
+        return false;
+    }
+
+    @ModelAttribute("draftQuantities")
+    public Map<Long, Map<Long, Integer>> initDraft() {
+        return new HashMap<>();
+    }
+
     @GetMapping
     public String index(Model model,
-                        @RequestParam(defaultValue = "true") boolean seulementCommandes) {
+                        @RequestParam(defaultValue = "true") boolean seulementCommandes,
+                        @ModelAttribute("draftQuantities") Map<Long, Map<Long, Integer>> draft) {
 
-        List<User> clients = userService.getAllClients();
+        List<User> clients = new ArrayList<>(userService.getAllClients());
+
+        clients.sort(
+                Comparator
+                        .comparing((User client) -> !"STOCK".equals(client.getInputMode()))
+                        .thenComparing(User::getName)
+        );
+
         List<OrderItem> items = orderItemService.getAll();
 
-        Map<Long, Map<Long, Integer>> quantities = new HashMap<>();
-        for (OrderItem item : items) {
-            quantities
-                    .computeIfAbsent(item.getUser().getId(), k -> new HashMap<>())
-                    .put(item.getProduct().getId(), item.getQuantity());
+        // INITIALISATION UNIQUEMENT SI VIDE
+        if (draft.isEmpty()) {
+            for (OrderItem item : items) {
+                draft
+                        .computeIfAbsent(item.getUser().getId(), k -> new HashMap<>())
+                        .put(item.getProduct().getId(), item.getQuantity());
+            }
         }
 
         Comparator<Product> triProduits = Comparator
@@ -52,6 +69,7 @@ public class AdminOrderController {
                 .thenComparing(Product::getName);
 
         List<Product> products;
+
         if (seulementCommandes) {
             products = items.stream()
                     .map(OrderItem::getProduct)
@@ -64,19 +82,35 @@ public class AdminOrderController {
 
         model.addAttribute("clients", clients);
         model.addAttribute("products", products);
-        model.addAttribute("quantities", quantities);
+        model.addAttribute("draftQuantities", draft);
         model.addAttribute("seulementCommandes", seulementCommandes);
+
         return "admin/commandes/index";
     }
 
     @GetMapping("/export")
     public ResponseEntity<byte[]> export() throws IOException {
         byte[] data = exportService.exportCommandes();
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=commandes.xlsx")
                 .contentType(MediaType.parseMediaType(
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(data);
+    }
+
+    @PostMapping("/decrement")
+    public String decrement(
+            @RequestParam Long userId,
+            @RequestParam Long productId,
+            @ModelAttribute("draftQuantities") Map<Long, Map<Long, Integer>> draft,
+            @RequestParam(defaultValue = "true") boolean seulementCommandes
+    ) {
+
+        draft.computeIfAbsent(userId, k -> new HashMap<>())
+                .computeIfPresent(productId, (k, v) -> Math.max(v - 1, 0));
+
+        return "redirect:/admin/commandes?seulementCommandes=" + seulementCommandes;
     }
 }

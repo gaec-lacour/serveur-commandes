@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="layout/base :: head"></head>
+<head th:replace="~{layout/base :: head}"></head>
 
 <body>
 <div th:replace="~{layout/base :: layout(~{::section})}">
@@ -18,12 +18,14 @@
             <tr>
                 <th>Nom</th>
                 <th>Email</th>
+                <th>Mode de saisie</th>
                 <th>Produits accessibles</th>
                 <th>Actions</th>
             </tr>
             <tr th:each="client : ${clients}">
                 <td th:text="${client.name}"></td>
                 <td th:text="${client.email}"></td>
+                <td th:text="${client.inputMode == 'ORDER' ? 'Commande' : 'Stock'}"></td>
                 <td th:text="${client.accessibleProducts.size()}"></td>
                 <td>
                     <div class="d-flex align-items-center gap-1 mb-3">

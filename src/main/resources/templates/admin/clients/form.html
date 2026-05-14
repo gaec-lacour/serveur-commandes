@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="layout/base :: head"></head>
+<head th:replace="~{layout/base :: head}"></head>
 
 <body>
 <div th:replace="~{layout/base :: layout(~{::section})}">
@@ -20,6 +20,29 @@
             <input type="text" name="name" th:value="${client.name}" placeholder="Nom"/>
             <input type="email" name="email" th:value="${client.email}" placeholder="Email"/>
             <input type="password" name="password" placeholder="Mot de passe (laisser vide pour ne pas changer)"/>
+
+            <fieldset>
+                <legend>Sélectionnez le mode de saisie&nbsp;:</legend>
+
+                <div>
+                    <input type="radio"
+                           id="stock"
+                           name="inputMode"
+                           value="STOCK" checked
+                           th:checked="${client.inputMode == 'STOCK'}" />
+                    <label for="stock">Stock</label>
+                </div>
+
+                <div>
+                    <input type="radio"
+                           id="commande"
+                           name="inputMode"
+                           value="ORDER"
+                           th:checked="${client.inputMode == 'ORDER'}" />
+                    <label for="commande">Commande</label>
+                </div>
+            </fieldset>
+
 
             <h3>Produits accessibles</h3>
             <div th:each="product : ${allProducts}">

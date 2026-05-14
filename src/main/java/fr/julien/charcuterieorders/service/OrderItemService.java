@@ -40,4 +40,18 @@ public class OrderItemService {
     public List<OrderItem> getAll() {
         return orderItemRepository.findAll();
     }
+
+    public void decrementQuantity(Long userId, Long productId) {
+
+        OrderItem item = orderItemRepository
+                .findByUserIdAndProductId(userId, productId)
+                .orElseThrow();
+
+        if (item.getQuantity() > 0) {
+            item.setQuantity(item.getQuantity() - 1);
+        }
+
+        orderItemRepository.save(item);
+    }
 }
+
