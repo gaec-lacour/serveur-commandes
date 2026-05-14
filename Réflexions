@@ -1,0 +1,21 @@
+Il va falloir être un peu rigoureux sur les termes, pour bien s'entendre et m'éviter de programmer pendant des heures un truc inutile.
+Donc tableau client = les tableaux que les clients remplissent
+tableau récapitulatif = tableau que l'admin (vous quoi) voit.
+
+Pour les magasins qui écrivent leur STOCK dans le tableau client :
+
+- les stocks sont entrés dans le tableau client du vendredi soir au lundi soir.
+- le mardi matin, les quantités entrées dans le tableau client sont copiés dans le tableau récapitulatif.
+- du mardi au vendredi, les articles sont préparés, les quantités du tableau récapitulatif ne sont pas changées, vous savez combien il faut d'article pour compléter le stock du client.
+- le vendredi soir, qu'est ce qui est remis à 0? Le tableau client et le tableau récapitulatif?
+
+
+
+Pour les magasins qui écrivent leur COMMANDE dans le tableau client :
+
+- les commandes sont entrés dans le tableau client du vendredi soir au lundi soir.
+- le mardi matin, les quantités entrées dans le tableau client sont copiées dans le tableau récapitulatif.
+- du mardi matin au vendredi, les articles sont préparés, à chaque article préparé on baisse de 1 la quantité du tableau récapitulatif.
+- le vendredi soir, qu'est ce qui est remis à 0? Les quantités du tableau client sont remises à 0 ou reste les mêmes, tant que le client n'y retouche pas entre le vendredi et le lundi soir? Toutes les quantités du tableau récapitulatif sont mises à 0 le vendredi soir (seulement pour les clients qui rentrent leur commande)?
+
+Il vaut mieux que la copie des quantité des tableaux clients vers le tableau récapitulatif du mardi matin et la remise à 0 du vendredi soir soient faites manuellement. Avec un bouton pour automatiser la tâche bien sur. Mais demander au serveur de remettre les tableau à 0 le vendredi à 23h59 par exemple, c'est dangereux, si le serveur est en panne à ce moment là par exemple. Je pense qu'on vise la robustesse et la facilité de maintenance.
