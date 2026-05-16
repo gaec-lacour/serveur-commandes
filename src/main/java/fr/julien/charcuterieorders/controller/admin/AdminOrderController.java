@@ -3,19 +3,23 @@ package fr.julien.charcuterieorders.controller.admin;
 import fr.julien.charcuterieorders.model.OrderItem;
 import fr.julien.charcuterieorders.model.Product;
 import fr.julien.charcuterieorders.model.User;
+import fr.julien.charcuterieorders.repository.OrderItemRepository;
 import fr.julien.charcuterieorders.service.ExportService;
-import fr.julien.charcuterieorders.service.OrderItemService;
+import fr.julien.charcuterieorders.service.AdminOrderItemService;
+
+
 import fr.julien.charcuterieorders.service.ProductService;
 import fr.julien.charcuterieorders.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -27,7 +31,7 @@ public class AdminOrderController {
 
     private final UserService userService;
     private final ProductService productService;
-    private final OrderItemService orderItemService;
+    private final AdminOrderItemService adminOrderItemService;
     private final ExportService exportService;
 
     @GetMapping
@@ -41,7 +45,7 @@ public class AdminOrderController {
                         .comparing((User client) -> !"STOCK".equals(client.getInputMode()))
                         .thenComparing(User::getName)
         );
-        List<OrderItem> items = orderItemService.getAll();
+        List<OrderItem> items = adminOrderItemService.getAll();
 
         Map<Long, Map<Long, Integer>> quantities = new HashMap<>();
         for (OrderItem item : items) {
@@ -82,4 +86,28 @@ public class AdminOrderController {
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(data);
     }
+
+    @PostMapping
+    public String store(@RequestParam Map<String, String> formData) {
+
+        formData.forEach((key, value) -> {
+
+            if (!key.startsWith("user_")) return;
+
+            String[] parts = key.split("_");
+
+            Long userId = Long.parseLong(parts[1]);
+            Long productId = Long.parseLong(parts[3]);
+
+            Integer quantity = value.isBlank() ? 0 : Integer.parseInt(value);
+
+            System.out.println("SAVE OR UPDATE user=" + userId + " product=" + productId + " qty=" + quantity);
+            adminOrderItemService.saveOrUpdate(userId, productId, quantity);
+        });
+
+        return "redirect:/admin/commandes";
+    }
+
+
+
 }

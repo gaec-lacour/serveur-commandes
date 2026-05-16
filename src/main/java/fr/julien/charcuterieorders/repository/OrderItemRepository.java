@@ -2,6 +2,7 @@ package fr.julien.charcuterieorders.repository;
 
 import fr.julien.charcuterieorders.model.OrderItem;
 import fr.julien.charcuterieorders.model.OrderItemId;
+import fr.julien.charcuterieorders.model.Product;
 import fr.julien.charcuterieorders.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,6 @@ public interface OrderItemRepository extends JpaRepository <OrderItem, OrderItem
     List<OrderItem> findByUser(User user);
     void deleteByUser(User user);
     Optional<OrderItem> findByUserIdAndProductId(Long userId, Long productId);
+    Optional<OrderItem> findByUserAndProduct(User user, Product product);
+
 }
