@@ -3,7 +3,7 @@
 
 <head th:replace="~{layout/base :: head}"></head>
 
-<body>
+<body th:classappend="${draftDirty} ? 'dirty' : ''">
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -21,7 +21,7 @@
                 <input type="hidden" name="seulementCommandes" value="false"/>
             </form>
 
-            <a class="btn btn-primary" th:href="@{/admin/commandes/export}">Exporter en Excel</a>
+            <a class="btn btn-primary btn-export" th:href="@{/admin/commandes/export}">Exporter en Excel</a>
         </div>
         <table class="table table-striped table-hover table-bordered align-middle">
             <thead>
@@ -37,27 +37,36 @@
 
                 <td th:each="client : ${clients}">
 
-                    <form th:action="@{/admin/commandes/decrement}"
-                          method="post">
+                    <input th:if="${client.inputMode == 'ORDER'}"
+                           type="button"
+                           class="btn btn-sm btn-outline-secondary"
+                           th:attr="data-user-id=${client.id}, data-product-id=${product.id}"
+                           th:value="${quantities[client.id][product.id]} ?: 0"
+                           onclick="decrement(this)" />
 
-                        <input type="hidden" name="userId" th:value="${client.id}">
-                        <input type="hidden" name="productId" th:value="${product.id}">
-                        <input type="hidden" name="seulementCommandes" th:value="${seulementCommandes}">
-
-                        <button type="submit"
-                                class="btn btn-link p-0 text-decoration-none"
-                                th:disabled="${client.inputMode != 'ORDER'}"
-                                th:text="${draftQuantities[client.id] != null && draftQuantities[client.id][product.id] != null
-                    ? draftQuantities[client.id][product.id]
-                    : '-'}">
-                        </button>
-
-                    </form>
+                    <span th:if="${client.inputMode == 'STOCK'}"
+                          th:text="${quantities[client.id][product.id]} ?: '-'">
+                    </span>
 
                 </td>
             </tr>
             </tbody>
         </table>
+
+        <script>
+                function decrement(btn) {
+
+                let value = parseInt(btn.value || "0", 10);
+
+                value = Math.max(value - 1, 0);
+
+                btn.value = value;
+            }
+        </script>
+
+
+
+        </script>
     </section>
 </div>
 </body>
