@@ -8,12 +8,11 @@
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-stretch gap-2 mb-3">
+            <h1 class="mb-0">Récapitulatif des commandes</h1>
 
-            <h1>Récapitulatif des commandes</h1>
-
-            <form method="get">
-                <div class="form-check">
+            <form method="get" class="d-flex align-items-center">
+                <div class="form-check mb-0">
                     <input class="form-check-input" type="checkbox"
                            name="seulementCommandes"
                            value="true"
@@ -26,19 +25,25 @@
                 <input type="hidden" name="seulementCommandes" value="false"/>
             </form>
 
-            <button class="btn btn-primary btn-save" type="button">
-                Enregistrer
-            </button>
-
-            <button class="btn btn-danger btn-cancel" type="button">
-                Annuler
-            </button>
-
-            <a class="btn btn-primary btn-export"
-               th:href="@{/admin/commandes/export}">
-                Exporter en Excel
-            </a>
-
+            <div class="d-flex align-items-center gap-2">
+                <form method="post" th:action="@{/admin/commandes/sync}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-warning btn-change" style="height: 59px;"
+                            onclick="return confirm('Écraser le tableau récapitulatif avec les commandes clients ?')">
+                        Synchroniser
+                    </button>
+                </form>
+                <form method="post" th:action="@{/admin/commandes/reset}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn btn-danger btn-change" style="height: 59px;"
+                            onclick="return confirm('Remettre toutes les commandes à zéro ?')">
+                        Remettre à zéro
+                    </button>
+                </form>
+                <button class="btn btn-primary btn-save" type="button" style="height: 59px;">Enregistrer</button>
+                <button class="btn btn-danger btn-cancel" type="button" style="height: 59px;">Annuler</button>
+                <a class="btn btn-primary btn-export" style="height: 59px"; th:href="@{/admin/commandes/export}">Exporter en Excel</a>
+            </div>
         </div>
 
         <!-- FORM SAVE GLOBAL -->
@@ -128,6 +133,12 @@
         location.reload();
     });
 
+    document.querySelectorAll('.btn-change').forEach(el => {
+        el.addEventListener('click', () => {
+            allowExit = true;
+        });
+    });
+
     document.querySelector('.btn-save').addEventListener('click', () => {
 
         const form = document.getElementById('saveForm');
@@ -163,7 +174,7 @@
         }
     });
 
-    document.querySelectorAll('a, button:not(.btn-save):not(.btn-cancel)').forEach(el => {
+    document.querySelectorAll('a, button:not(.btn-save):not(.btn-cancel):not(.btn-change)').forEach(el => {
         el.addEventListener('click', function (e) {
             if (!modified) return;
 

@@ -4,7 +4,10 @@ import fr.julien.charcuterieorders.model.OrderItem;
 import fr.julien.charcuterieorders.model.OrderItemId;
 import fr.julien.charcuterieorders.model.Product;
 import fr.julien.charcuterieorders.model.User;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +17,4 @@ public interface OrderItemRepository extends JpaRepository <OrderItem, OrderItem
     void deleteByUser(User user);
     Optional<OrderItem> findByUserIdAndProductId(Long userId, Long productId);
     Optional<OrderItem> findByUserAndProduct(User user, Product product);
-
 }

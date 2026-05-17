@@ -1,10 +1,7 @@
 package fr.julien.charcuterieorders.service;
 
-import fr.julien.charcuterieorders.model.OrderItem;
-import fr.julien.charcuterieorders.model.OrderItemId;
-import fr.julien.charcuterieorders.model.Product;
-import fr.julien.charcuterieorders.model.User;
-import fr.julien.charcuterieorders.repository.OrderItemRepository;
+import fr.julien.charcuterieorders.model.*;
+import fr.julien.charcuterieorders.repository.AdminOrderItemRepository;
 import fr.julien.charcuterieorders.repository.ProductRepository;
 import fr.julien.charcuterieorders.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,37 +13,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminOrderItemService {
 
-    private final OrderItemRepository orderItemRepository;
+    private final AdminOrderItemRepository adminOrderItemRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
+    public List<AdminOrderItem> getAll() {
+        return adminOrderItemRepository.findAll();
+    }
 
     public void saveOrUpdate(Long userId, Long productId, Integer quantity) {
-
+        User user = userRepository.findById(userId).orElseThrow();
+        Product product = productRepository.findById(productId).orElseThrow();
         OrderItemId id = new OrderItemId(userId, productId);
 
-        OrderItem item = orderItemRepository.findById(id)
-                .orElse(null);
-
-        if (quantity == null || quantity <= 0) {
-            if (item != null) {
-                orderItemRepository.delete(item);
-            }
+        if (quantity == 0) {
+            adminOrderItemRepository.deleteById(id);
             return;
         }
 
-        if (item == null) {
-            item = new OrderItem();
-            item.setId(id);
-            item.setUser(userRepository.getReferenceById(userId));
-            item.setProduct(productRepository.getReferenceById(productId));
-        }
-
+        AdminOrderItem item = adminOrderItemRepository
+                .findById(id)
+                .orElse(new AdminOrderItem(id, user, product, 0));
         item.setQuantity(quantity);
-
-        orderItemRepository.save(item);
+        adminOrderItemRepository.save(item);
     }
-    public List<OrderItem> getAll() {
-            return orderItemRepository.findAll();
+    public void syncFromOrderItems(List<OrderItem> orderItems) {
+        adminOrderItemRepository.deleteAll();
+        for (OrderItem item : orderItems) {
+            OrderItemId id = new OrderItemId(item.getUser().getId(), item.getProduct().getId());
+            AdminOrderItem adminItem = new AdminOrderItem(id, item.getUser(), item.getProduct(), item.getQuantity());
+            adminOrderItemRepository.save(adminItem);
         }
+    }
+    public void resetAll() {
+        adminOrderItemRepository.deleteAll();
+    }
 }

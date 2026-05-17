@@ -35,6 +35,9 @@ public class OrderItemService {
             orderItemRepository.save(item);
         }
     }
+    public void resetAll() {
+        orderItemRepository.deleteAll();
+    }
 
     // Toutes les commandes pour la vue admin
     public List<OrderItem> getAll() {
