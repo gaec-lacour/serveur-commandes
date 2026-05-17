@@ -47,13 +47,6 @@ public class AdminOrderController {
         );
         List<OrderItem> items = adminOrderItemService.getAll();
 
-        Map<Long, Map<Long, Integer>> quantities = new HashMap<>();
-        for (OrderItem item : items) {
-            quantities
-                    .computeIfAbsent(item.getUser().getId(), k -> new HashMap<>())
-                    .put(item.getProduct().getId(), item.getQuantity());
-        }
-
         Comparator<Product> triProduits = Comparator
                 .comparingInt((Product p) -> ProductService.CATEGORY_ORDER.indexOf(p.getCategory()))
                 .thenComparing(Product::getName);
@@ -68,6 +61,32 @@ public class AdminOrderController {
         } else {
             products = productService.getAllProducts();
         }
+
+        Map<Long, Map<Long, Integer>> quantities = new HashMap<>();
+
+// 1. initialisation complète
+        for (User client : clients) {
+            Map<Long, Integer> productMap = new HashMap<>();
+
+            for (Product product : products) {
+                productMap.put(product.getId(), 0);
+            }
+
+            quantities.put(client.getId(), productMap);
+        }
+
+// 2. override avec vraies données
+        for (OrderItem item : items) {
+            Long userId = item.getUser().getId();
+            Long productId = item.getProduct().getId();
+
+            quantities
+                    .computeIfAbsent(userId, k -> new HashMap<>())
+                    .put(productId, item.getQuantity());
+        }
+
+
+
 
         model.addAttribute("clients", clients);
         model.addAttribute("products", products);

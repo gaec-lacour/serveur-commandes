@@ -75,11 +75,11 @@
                                type="button"
                                class="btn btn-sm btn-outline-secondary"
                                th:attr="data-user-id=${client.id}, data-product-id=${product.id}"
-                               th:value="${quantities[client.id][product.id]} ?: 0"
+                               th:value="${quantities[client.id] != null ? quantities[client.id][product.id] : 0}"
                                onclick="decrement(this)" />
 
                         <span th:if="${client.inputMode == 'STOCK'}"
-                              th:text="${quantities[client.id][product.id]} ?: '0'">
+                              th:text="${quantities[client.id] != null ? quantities[client.id][product.id] : 0}">
                     </span>
 
                     </td>
