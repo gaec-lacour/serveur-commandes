@@ -31,7 +31,7 @@ public class User{
     @Column(nullable = false)
     private String role; // "ADMIN" ou "CLIENT"
 
-    @Column(nullable = false, name = "input_mode")
+    @Column(nullable = false)
     private String inputMode;
 
     @ManyToMany
