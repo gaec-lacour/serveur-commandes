@@ -164,13 +164,19 @@
     });
 
     document.querySelectorAll('a, button:not(.btn-save):not(.btn-cancel)').forEach(el => {
-        el.addEventListener('click', function(e) {
-            if (modified) {
-                if (!confirm('Vous avez des modifications non enregistrées. Quitter quand même ?')) {
-                    e.preventDefault();
-                } else {
-                    modified = false;
-                }
+        el.addEventListener('click', function (e) {
+            if (!modified) return;
+
+            let message = 'Vous avez des modifications non enregistrées. Quitter quand même ?';
+
+            if (el.classList.contains('btn-export')) {
+                message = "Le document n'a pas été enregistré, les données exportées ne seront pas à jour. Exporter quand même ?";
+            }
+
+            if (!confirm(message)) {
+                e.preventDefault();
+            } else {
+                allowExit = true;
             }
         });
     });
