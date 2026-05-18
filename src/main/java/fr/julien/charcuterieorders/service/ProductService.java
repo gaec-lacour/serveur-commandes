@@ -25,6 +25,7 @@ public class ProductService {
                 .toList();
     }
 
+
     // Groupe une liste de produits par catégorie
     public Map<String, List<Product>> groupByCategory(List<Product> products) {
         return products.stream()

@@ -13,3 +13,11 @@
 .separator-col {
     border-left: 2px solid #6c757d !important;
 }
+
+body {
+    background-image: url("/img/logo.png");
+    background-repeat: no-repeat;
+    background-position: center -75px;
+    background-size: 410px;
+    padding-top: 290px;
+}

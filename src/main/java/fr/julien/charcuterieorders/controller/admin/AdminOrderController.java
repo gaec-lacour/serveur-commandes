@@ -1,6 +1,7 @@
 package fr.julien.charcuterieorders.controller.admin;
 
 import fr.julien.charcuterieorders.model.AdminOrderItem;  // ← changé
+import fr.julien.charcuterieorders.model.Order;
 import fr.julien.charcuterieorders.model.Product;
 import fr.julien.charcuterieorders.model.User;
 import fr.julien.charcuterieorders.repository.AdminOrderItemRepository;
@@ -30,6 +31,7 @@ public class AdminOrderController {
     private final OrderItemService orderItemService;
     private final OrderItemRepository orderItemRepository;
     private final AdminOrderItemRepository adminOrderItemRepository;
+    private final OrderService orderService;
 
     @GetMapping
     public String index(Model model,
@@ -78,10 +80,15 @@ public class AdminOrderController {
                     .put(productId, item.getQuantity());
         }
 
+        List<Order> orders = new ArrayList<>();
+
+        orders = orderService.getAllOrders();
+
         model.addAttribute("clients", clients);
         model.addAttribute("products", products);
         model.addAttribute("quantities", quantities);
         model.addAttribute("seulementCommandes", seulementCommandes);
+        model.addAttribute("orders", orders);
         return "admin/commandes/index";
     }
 
@@ -122,6 +129,14 @@ public class AdminOrderController {
     public String reset() {
         adminOrderItemService.resetAll();
         orderItemService.resetAll();
+        return "redirect:/admin/commandes";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteOrder(@PathVariable Long id) {
+
+        orderService.delete(id);
+
         return "redirect:/admin/commandes";
     }
 }
