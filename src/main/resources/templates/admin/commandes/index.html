@@ -3,8 +3,10 @@
 
 <head th:replace="~{layout/base :: head}"></head>
 
-<body>
 
+
+<body>
+<div th:replace="~{layout/base :: title}"></div>
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
 
@@ -85,6 +87,7 @@
                 </thead>
 
                 <tbody>
+
 
 
 

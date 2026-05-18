@@ -4,6 +4,7 @@
 <head th:replace="~{layout/base :: head}"></head>
 
 <body>
+<div th:replace="~{layout/base :: title}"></div>
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
         <form th:action="${client.id} ? @{/admin/clients/{id}(id=${client.id})} : @{/admin/clients}"

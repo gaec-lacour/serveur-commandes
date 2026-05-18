@@ -4,6 +4,7 @@
 <head th:replace="~{layout/base :: head}"></head>
 
 <body>
+<div th:replace="~{layout/base :: title}"></div>
 <div th:replace="~{layout/base :: layout(~{::section})}">
     <section>
         <h1 th:text="${product.id} ? 'Modifier le produit' : 'Nouveau produit'"></h1>
