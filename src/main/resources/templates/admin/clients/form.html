@@ -46,6 +46,9 @@
 
 
             <h3>Produits accessibles</h3>
+            <button type="button" onclick="toggleAll()">
+                Tout sélectionner / désélectionner
+            </button>
             <div th:each="product : ${allProducts}">
                 <label>
                     <input type="checkbox"
@@ -61,3 +64,16 @@
 </div>
 </body>
 </html>
+<script>
+    function toggleAll() {
+        const checkboxes = document.querySelectorAll(
+            'input[name="productIds"]'
+        );
+
+        const allChecked = [...checkboxes].every(cb => cb.checked);
+
+        checkboxes.forEach(cb => {
+            cb.checked = !allChecked;
+        });
+    }
+</script>
