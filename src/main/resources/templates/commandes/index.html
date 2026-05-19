@@ -74,15 +74,23 @@
 
             function resetQuantities() {
 
+                const inputs = document.querySelectorAll('input[type="number"]');
+
+                const hasPositiveValue = [...inputs].some(input => {
+                    return parseInt(input.value || 0, 10) > 0;
+                });
+
+                if (hasPositiveValue) {
+                    modified = true;
+                }
+
                 if (!confirm('Mettre toutes les quantités à 0 ?')) {
                     return;
                 }
 
-                document.querySelectorAll('input[type="number"]').forEach(input => {
+                inputs.forEach(input => {
                     input.value = "";
                 });
-
-                //modified = true;
             }
 
             document.querySelectorAll('input[type="number"]').forEach(input => {

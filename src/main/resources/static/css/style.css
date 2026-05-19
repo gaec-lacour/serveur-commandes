@@ -22,3 +22,12 @@ body.client_page
         background-size: 410px;
         padding-top: 270px;
     }
+body.admin_page
+{
+    background-image: url("/img/logo.png");
+    background-repeat: no-repeat;
+    background-position-x: calc(100% - 70px);
+    background-position-y: 0;
+    background-size: 175px;
+    padding-top: 50px;
+}

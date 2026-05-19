@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,14 @@ public class OrderItemService {
     public List<OrderItem> getByUser(User user) {
         return orderItemRepository.findByUser(user);
     }
+
+    public Integer getQuantity(User user, Product product) {
+
+        return orderItemRepository.findByUserAndProduct(user, product)
+                .map(OrderItem::getQuantity)
+                .orElse(0);
+    }
+
 
     // ≈ updateOrInsert en Laravel
     public void saveOrUpdate(User user, Product product, Integer quantity) {

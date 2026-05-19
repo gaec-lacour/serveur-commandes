@@ -65,12 +65,16 @@ public class OrderController {
 
         User user = userService.getByEmail(userDetails.getUsername());
 
-        Map<Long, Integer> dbQuantities = orderItemService.getByUser(user)
-                .stream()
+        List<OrderItem> items = orderItemService.getByUser(user);
+
+        Map<Long, Integer> dbQuantities = items.stream()
                 .collect(Collectors.toMap(
                         item -> item.getProduct().getId(),
                         OrderItem::getQuantity
                 ));
+        for (Product p : user.getAccessibleProducts()) {
+            dbQuantities.putIfAbsent(p.getId(), 0);
+        }
 
         Map<Long, Integer> formQuantities = new HashMap<>();
 
