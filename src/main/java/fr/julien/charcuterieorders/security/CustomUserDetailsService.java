@@ -15,12 +15,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable : " + email));
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable : " + login));
 
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
+                .withUsername(user.getLogin())
                 .password(user.getPassword())
                 .roles(user.getRole())   // "ADMIN" → "ROLE_ADMIN" automatiquement
                 .build();

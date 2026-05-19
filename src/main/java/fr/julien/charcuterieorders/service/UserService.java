@@ -37,6 +37,7 @@ public class UserService {
     public User update(User existing, User form) {
         existing.setName(form.getName());
         existing.setEmail(form.getEmail());
+        existing.setLogin(form.getLogin());
 
         // On ne rehashe que si un nouveau mot de passe est saisi
         if (form.getPassword() != null && !form.getPassword().isBlank()) {
@@ -56,6 +57,11 @@ public class UserService {
     }
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+    }
+
+    public User getByLogin(String email) {
+        return userRepository.findByLogin(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
     }
 }

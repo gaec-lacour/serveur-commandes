@@ -39,7 +39,7 @@ public class OrderController {
     public String index(Model model,
                         @AuthenticationPrincipal UserDetails userDetails) {
 
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByLogin(userDetails.getUsername());
 
         // Produits accessibles groupés par catégorie
         Map<String, List<Product>> productsByCategory = user.getAccessibleProducts()
@@ -63,7 +63,7 @@ public class OrderController {
     public String store(@AuthenticationPrincipal UserDetails userDetails,
                         @RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes) {
 
-        User user = userService.getByEmail(userDetails.getUsername());
+        User user = userService.getByLogin(userDetails.getUsername());
 
         List<OrderItem> items = orderItemService.getByUser(user);
 

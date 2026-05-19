@@ -18,9 +18,17 @@
 
 
 
-            <input type="text" name="name" th:value="${client.name}" placeholder="Nom"/>
-            <input type="email" name="email" th:value="${client.email}" placeholder="Email"/>
-            <input type="password" name="password" placeholder="Mot de passe (laisser vide pour ne pas changer)"/>
+            <label for="name">Nom</label>
+            <input id="name" type="text" name="name" th:value="${client.name}" placeholder="Nom"/>
+
+            <label for="login">Login</label>
+            <input id="login" type="text" name="login" th:value="${client.login}" placeholder="Login"/>
+
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" th:value="${client.email}" placeholder="Email"/>
+
+            <label for="password">Mot de passe</label>
+            <input id="password" type="password" name="password" placeholder="Mot de passe (laisser vide pour ne pas changer)"/>
 
             <fieldset>
                 <legend>Sélectionnez le mode de saisie&nbsp;:</legend>
