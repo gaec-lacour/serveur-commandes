@@ -80,9 +80,8 @@ public class OrderController {
                 Long productId = Long.parseLong(key.replace("product_", ""));
                 Integer quantity = value.isBlank() ? 0 : Integer.parseInt(value);
 
-                if (quantity > 0) {
-                    formQuantities.put(productId, quantity);
-                }
+                formQuantities.put(productId, quantity);
+
             }
         });
 

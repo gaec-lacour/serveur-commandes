@@ -17,11 +17,18 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1 class="mb-0">Ma feuille de commande</h1>
 
-                    <button class="btn btn-primary btn-save" type="submit">
-                        Enregistrer
-                    </button>
-                </div>
+                    <div class="d-flex gap-2">
+                        <button type="button"
+                                class="btn btn-warning"
+                                onclick="resetQuantities()">
+                            Remise à 0
+                        </button>
 
+                        <button class="btn btn-primary btn-save" type="submit">
+                            Enregistrer
+                        </button>
+                    </div>
+                </div>
                 <!-- Catégories -->
                 <div th:each="category : ${productsByCategory}" class="mb-5">
 
@@ -64,6 +71,19 @@
             let allowExit = false;
 
             const form = document.querySelector('form');
+
+            function resetQuantities() {
+
+                if (!confirm('Mettre toutes les quantités à 0 ?')) {
+                    return;
+                }
+
+                document.querySelectorAll('input[type="number"]').forEach(input => {
+                    input.value = "";
+                });
+
+                //modified = true;
+            }
 
             document.querySelectorAll('input[type="number"]').forEach(input => {
                 input.addEventListener('input', function() {
