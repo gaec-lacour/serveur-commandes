@@ -1,4 +1,4 @@
-package fr.julien.charcuterieorders.controller;
+package fr.julien.charcuterieorders.controller.admin;
 
 import fr.julien.charcuterieorders.model.OrderItem;
 import fr.julien.charcuterieorders.model.Product;
@@ -12,10 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Comparator;
@@ -25,23 +22,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/commandes")
+@RequestMapping("/admin/commandes/edit/")
 @RequiredArgsConstructor
 
-public class OrderController {
+public class AdminOrderEditController {
 
-    private final UserService userService;
-    private final OrderItemService orderItemService;
-    private final ProductService productService;
     private final OrderService orderService;
-
-    @GetMapping
-    public String index(Model model,
-                        @AuthenticationPrincipal UserDetails userDetails) {
-
-        User user = userService.getByLogin(userDetails.getUsername());
+    private final UserService userService;
+    private final ProductService productService;
+    private final OrderItemService orderItemService;
 
 
+    @GetMapping("/{id}")
+    public String index(@PathVariable Long id, Model model) {
+
+        User user = userService.getById(id);
 
         // Produits accessibles groupés par catégorie
         Map<String, List<Product>> productsByCategory = user.getAccessibleProducts()
@@ -57,15 +52,16 @@ public class OrderController {
                 ));
 
         model.addAttribute("productsByCategory",
-                productService.groupByCategory(user.getAccessibleProducts()));model.addAttribute("quantities", quantities);
-        return "commandes/index";
+                productService.groupByCategory(user.getAccessibleProducts()));
+        model.addAttribute("quantities", quantities);
+        model.addAttribute("client", user);
+        return "admin/commandes/edit";
     }
 
-    @PostMapping
-    public String store(@AuthenticationPrincipal UserDetails userDetails,
-                        @RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes) {
+    @PostMapping("/{id}")
+    public String store(@PathVariable Long id, @RequestParam Map<String, String> formData, RedirectAttributes redirectAttributes) {
 
-        User user = userService.getByLogin(userDetails.getUsername());
+        User user = userService.getById(id);
 
         List<OrderItem> items = orderItemService.getByUser(user);
 
@@ -95,7 +91,7 @@ public class OrderController {
 
         if (!changed) {
             redirectAttributes.addFlashAttribute("error", "Aucune modification détectée sur la commande, enregistrement impossible");
-            return "redirect:/commandes";
+            return "redirect:/admin/commandes";
         }
 
         formQuantities.forEach((productId, quantity) -> {
@@ -113,6 +109,6 @@ public class OrderController {
 
         redirectAttributes.addFlashAttribute("success", "Commande enregistrée");
 
-        return "redirect:/commandes";
+        return String.format("redirect:/admin/commandes/edit/%d", id);
     }
 }

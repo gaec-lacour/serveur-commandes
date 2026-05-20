@@ -98,9 +98,13 @@
 
                     <th th:each="client, iterStat : ${clients}"
                         th:classappend="${client.inputMode == 'ORDER'
-        and (iterStat.first
-        or clients[iterStat.index - 1].inputMode == 'STOCK')} ? 'separator-col' : ''"
-                        th:text="${client.name}">
+                        and (iterStat.first
+                        or clients[iterStat.index - 1].inputMode == 'STOCK')} ? 'separator-col' : ''">
+
+                        <a th:href="@{/admin/commandes/edit/{id}(id=${client.id})}"
+                           th:text="${client.name}">
+                        </a>
+
                     </th>
 
                 </tr>

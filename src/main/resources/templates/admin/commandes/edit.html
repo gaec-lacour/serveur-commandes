@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{layout/base :: head}"
+></head>
+
+<body class="admin_page">
+
+<div th:replace="~{layout/base :: layout(~{::section})}">
+    <section>
+
+        <div class="container py-4">
+
+            <!-- Header -->
+            <form th:action="@{/admin/commandes/edit/{id}(id=${client.id})}" method="post">
+
+                <!-- <input type="hidden" name="clientId" th:value="${client.id}"> -->
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="mb-0">
+                        Feuille de commande de <span th:text="${client.name}"></span>
+                    </h1>
+
+                    <div class="d-flex gap-2">
+                        <button type="button"
+                                class="btn btn-warning"
+                                onclick="resetQuantities()">
+                            Remise à 0
+                        </button>
+
+                        <button class="btn btn-primary btn-save" type="submit">
+                            Enregistrer
+                        </button>
+                    </div>
+                </div>
+                <!-- Catégories -->
+                <div th:each="category : ${productsByCategory}" class="mb-5">
+
+                    <h2 class="h4 mb-3" th:text="${category.key}"></h2>
+
+                    <table class="table table-striped table-hover table-bordered align-middle w-100 fixed-table">
+
+                        <thead class="table-light">
+                        <tr>
+                            <th style="width: 50%;">Produit</th>
+                            <th style="width: 50%;">Quantité</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="product : ${category.value}"
+                            th:if="${product.active}">
+
+                            <td th:text="${product.name}"></td>
+
+                            <td>
+                                <input type="number"
+                                       class="form-control form-control-sm"
+                                       th:name="'product_' + ${product.id}"
+                                       th:value="${quantities[product.id]}"
+                                       min="0"/>
+                            </td>
+
+                        </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </form>
+
+        </div>
+        <script>
+            let modified = false;
+            let allowExit = false;
+
+            const form = document.querySelector('form');
+
+            function resetQuantities() {
+
+                const inputs = document.querySelectorAll('input[type="number"]');
+
+                const hasPositiveValue = [...inputs].some(input => {
+                    return parseInt(input.value || 0, 10) > 0;
+                });
+
+                if (hasPositiveValue) {
+                    modified = true;
+                }
+
+                if (!confirm('Mettre toutes les quantités à 0 ?')) {
+                    return;
+                }
+
+                inputs.forEach(input => {
+                    input.value = "";
+                });
+            }
+
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    modified = true;
+                });
+            });
+
+            document.querySelector('.btn-save').addEventListener('click', () => {
+                allowExit = true;
+                modified = false;
+            });
+
+
+            window.addEventListener('beforeunload', function(e) {
+                if (modified && !allowExit) {
+                    e.preventDefault();
+                }
+            });
+
+            document.querySelectorAll('a, button[type="submit"]:not(.btn-save)').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    if (modified ) {
+                        if (!confirm('Vous avez des modifications non enregistrées. Quitter quand même ?')) {
+                            e.preventDefault();
+                        } else {
+                            modified = false;
+                        }
+                    }
+                });
+            });
+
+        </script>
+    </section>
+</div>
+
+</body>
+</html>
