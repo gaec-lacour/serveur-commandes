@@ -16,9 +16,9 @@
             <input type="text" name="name" th:value="${product.name}" placeholder="Nom"/>
 
             <select name="category">
-                <option value="boeuf"  th:selected="${product.category == 'Boeuf'}">Bœuf</option>
-                <option value="veau"   th:selected="${product.category == 'Veau'}">Veau</option>
-                <option value="porc"   th:selected="${product.category == 'Porc'}">Porc</option>
+                <option value="boeuf" th:selected="${product.category == 'boeuf'}">Bœuf</option>
+                <option value="veau"  th:selected="${product.category == 'veau'}">Veau</option>
+                <option value="porc"  th:selected="${product.category == 'porc'}">Porc</option>
             </select>
 
 

@@ -44,7 +44,8 @@
                         </thead>
 
                         <tbody>
-                        <tr th:each="product : ${category.value}">
+                        <tr th:each="product : ${category.value}"
+                            th:if="${product.active}">
 
                             <td th:text="${product.name}"></td>
 

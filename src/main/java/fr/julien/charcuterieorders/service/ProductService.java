@@ -54,4 +54,13 @@ public class ProductService {
         return productRepository.findByCategory(category);
     }
 
+    public void updateActive(Long productId, boolean active) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setActive(active);
+
+        productRepository.save(product);
+    }
+
 }

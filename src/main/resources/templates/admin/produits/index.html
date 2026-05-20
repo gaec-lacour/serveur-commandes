@@ -30,6 +30,16 @@
                                     th:attr="data-action=@{/admin/produits/{id}/supprimer(id=${product.id})},data-name=${product.name}">
                                 Supprimer
                             </button>
+
+                            <label class="form-check-label">
+                                Produit actif :
+                            </label>
+
+                            <input type="checkbox"
+                                   class="checkActive"
+                                   name="active"
+                                   th:value="${product.id}"
+                                   th:checked="${product.active}"/>
                         </div>
                     </td>
                 </tr>
@@ -67,5 +77,33 @@
 
     </section>
 </div>
+<script>
+    document.querySelectorAll('.checkActive').forEach(cb => {
+        cb.addEventListener('change', async (e) => {
+
+            const id = e.target.value;
+            const active = e.target.checked;
+            const previous = !active;
+
+            const token = document.querySelector('meta[name="_csrf"]').content;
+            const header = document.querySelector('meta[name="_csrf_header"]').content;
+
+            const res = await fetch(`/admin/produits/${id}/active`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    [header]: token
+                },
+                body: JSON.stringify({ active })
+            });
+
+            if (!res.ok) {
+
+                if (!res.ok) e.target.checked = previous; // rollback UI
+                alert("Le produit ne peut pas être désactivé, il est présent dans une commande client !")
+            }
+        });
+    });
+</script>
 </body>
 </html>

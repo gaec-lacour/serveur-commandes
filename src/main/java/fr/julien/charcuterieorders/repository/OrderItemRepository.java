@@ -17,4 +17,5 @@ public interface OrderItemRepository extends JpaRepository <OrderItem, OrderItem
     void deleteByUser(User user);
     Optional<OrderItem> findByUserIdAndProductId(Long userId, Long productId);
     Optional<OrderItem> findByUserAndProduct(User user, Product product);
+    boolean existsByProductId(Long productId);
 }

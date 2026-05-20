@@ -53,5 +53,9 @@ public class OrderItemService {
         return orderItemRepository.findAll();
     }
 
+    public boolean isOrdered(Product product) {
+        return orderItemRepository.existsByProductId(product.getId());
+    }
+
 }
 

@@ -1,9 +1,11 @@
 package fr.julien.charcuterieorders.controller.admin;
 
 import fr.julien.charcuterieorders.model.Product;
+import fr.julien.charcuterieorders.service.OrderItemService;
 import fr.julien.charcuterieorders.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,24 @@ import java.util.stream.Collectors;
 
 public class AdminProductController {
     private final ProductService productService;
+    private final OrderItemService orderItemService;
+
+    @PatchMapping("/{id}/active")
+    public ResponseEntity<Void> updateActive(@PathVariable Long id,
+                                             @RequestBody Map<String, Boolean> body) {
+
+        boolean active = body.get("active");
+
+        Product product = productService.getById(id);
+
+        if (orderItemService.isOrdered(product)) {
+            return ResponseEntity.status(409).build();
+        }
+
+        productService.updateActive(id, active);
+
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping
     public String index(Model model) {
@@ -48,9 +68,16 @@ public class AdminProductController {
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable Long id, @ModelAttribute Product product) {
-        product.setId(id);
-        productService.save(product);
+    public String update(@PathVariable Long id, @ModelAttribute Product formProduct) {
+
+        Product existing = productService.getById(id);
+
+        existing.setName(formProduct.getName());
+        existing.setCategory(formProduct.getCategory());
+        // NE PAS toucher à active
+
+        productService.save(existing);
+
         return "redirect:/admin/produits";
     }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class Product {
 
     @Column(nullable = false)
     private String category; //"boeuf", "veau", "porc"
+
+    @Column(nullable = false)
+    private boolean active;
 
     @ManyToMany(mappedBy = "accessibleProducts")
     private List<User> users = new ArrayList<>();
