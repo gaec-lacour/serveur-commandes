@@ -1,5 +1,7 @@
 package fr.julien.charcuterieorders.controller.admin;
 
+import fr.julien.charcuterieorders.dto.OrderForm;
+import fr.julien.charcuterieorders.dto.OrderLineForm;
 import fr.julien.charcuterieorders.model.AdminOrderItem;  // ← changé
 import fr.julien.charcuterieorders.model.Order;
 import fr.julien.charcuterieorders.model.Product;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.*;
@@ -72,21 +75,27 @@ public class AdminOrderController {
             quantities.put(client.getId(), productMap);
         }
 
+        Map<Long, Map<Long, Integer>> doneQuantities = new HashMap<>();
+
         for (AdminOrderItem item : items) {  // ← changé
             Long userId = item.getUser().getId();
             Long productId = item.getProduct().getId();
             quantities
                     .computeIfAbsent(userId, k -> new HashMap<>())
                     .put(productId, item.getQuantity());
+            doneQuantities
+                    .computeIfAbsent(userId, k -> new HashMap<>())
+                    .put(productId, item.getDoneQuantity());
         }
 
-        List<Order> orders = new ArrayList<>();
 
-        orders = orderService.getAllOrders();
+
+        List<Order> orders = orderService.getAllOrders();
 
         model.addAttribute("clients", clients);
         model.addAttribute("products", products);
         model.addAttribute("quantities", quantities);
+        model.addAttribute("doneQuantities", doneQuantities);
         model.addAttribute("seulementCommandes", seulementCommandes);
         model.addAttribute("orders", orders);
         return "admin/commandes/index";
@@ -104,18 +113,18 @@ public class AdminOrderController {
     }
 
     @PostMapping
-    public String store(@RequestParam Map<String, String> formData) {
+    public String store(@ModelAttribute OrderForm form, RedirectAttributes redirectAttributes) {
 
-        formData.forEach((key, value) -> {
-            if (!key.startsWith("user_")) return;
+        for (OrderLineForm item : form.getItems()) {
+            adminOrderItemService.saveOrUpdate(
+                    item.getUserId(),
+                    item.getProductId(),
+                    item.getQuantity(),
+                    item.getDoneQuantity()
+            );
+        }
 
-            String[] parts = key.split("_");
-            Long userId = Long.parseLong(parts[1]);
-            Long productId = Long.parseLong(parts[3]);
-            Integer quantity = value.isBlank() ? 0 : Integer.parseInt(value);
-
-            adminOrderItemService.saveOrUpdate(userId, productId, quantity);
-        });
+        redirectAttributes.addFlashAttribute("success", "Modifications enregistrées");
 
         return "redirect:/admin/commandes";
     }

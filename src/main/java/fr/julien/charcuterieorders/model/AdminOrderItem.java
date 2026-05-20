@@ -27,4 +27,7 @@ public class AdminOrderItem {
     private Product product;
 
     private Integer quantity;
+
+    @Column(name = "done_quantity")
+    private Integer doneQuantity;
 }
