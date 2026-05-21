@@ -8,14 +8,13 @@ import fr.julien.charcuterieorders.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class AdminOrderItemService {
 
     private final AdminOrderItemRepository adminOrderItemRepository;
@@ -48,7 +47,7 @@ public class AdminOrderItemService {
     public void syncByUser(Long userId) {
 
         Map<OrderItemId, AdminOrderItem> existing =
-                adminOrderItemRepository.findAll()
+                adminOrderItemRepository.findByUserId(userId)
                         .stream()
                         .collect(Collectors.toMap(
                                 AdminOrderItem::getId,
@@ -56,6 +55,8 @@ public class AdminOrderItemService {
                         ));
 
         List<AdminOrderItem> toSave = new ArrayList<>();
+
+        Set<OrderItemId> validIds = new HashSet<>();
 
         List<OrderItem> userItems = orderItemRepository.findByUserId(userId);
 
@@ -65,6 +66,8 @@ public class AdminOrderItemService {
                     item.getUser().getId(),
                     item.getProduct().getId()
             );
+
+            validIds.add(id);
 
             AdminOrderItem previous = existing.get(id);
 
@@ -85,7 +88,16 @@ public class AdminOrderItemService {
 
         adminOrderItemRepository.saveAll(toSave);
 
+        List<AdminOrderItem> orphans = existing.values()
+                .stream()
+                .filter(adminItem -> !validIds.contains(adminItem.getId()))
+                .toList();
+
+        adminOrderItemRepository.deleteAll(orphans);
+
     }
+
+
     public void syncFromOrderItems(List<OrderItem> orderItems) {
 
         Map<OrderItemId, AdminOrderItem> existing =
@@ -98,12 +110,16 @@ public class AdminOrderItemService {
 
         List<AdminOrderItem> toSave = new ArrayList<>();
 
+        Set<OrderItemId> validIds = new HashSet<>();
+
         for (OrderItem item : orderItems) {
 
             OrderItemId id = new OrderItemId(
                     item.getUser().getId(),
                     item.getProduct().getId()
             );
+
+            validIds.add(id);
 
             AdminOrderItem previous = existing.get(id);
 
@@ -123,7 +139,15 @@ public class AdminOrderItemService {
         }
 
         adminOrderItemRepository.saveAll(toSave);
+
+        List<AdminOrderItem> orphans = existing.values()
+                .stream()
+                .filter(adminItem -> !validIds.contains(adminItem.getId()))
+                .toList();
+
+        adminOrderItemRepository.deleteAll(orphans);
     }
+
 
 
     public void resetAll() {
