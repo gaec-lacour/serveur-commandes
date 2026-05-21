@@ -29,14 +29,16 @@
 
                 <form method="post" th:action="@{/admin/commandes/sync}">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                    <button type="submit" class="btn btn-warning btn-change" style="height: 59px;">
+                    <button type="submit" class="btn btn-warning btn-change" style="height: 59px;"
+                            onclick="return confirm('Confirmer la synchronisation ? Toutes les données du tableau seront écrasées')">
                         Synchroniser
                     </button>
                 </form>
 
                 <form method="post" th:action="@{/admin/commandes/reset}">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                    <button type="submit" class="btn btn-danger btn-change" style="height: 59px;">
+                    <button type="submit" class="btn btn-danger btn-change" style="height: 59px;"
+                            onclick="return confirm('Confirmer la suppression ? Toutes les données des commandes clients et du tableau récapitulatif seront supprimées')">
                         Remettre à zéro
                     </button>
                 </form>
