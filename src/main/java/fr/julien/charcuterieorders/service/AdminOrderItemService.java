@@ -68,13 +68,9 @@ public class AdminOrderItemService {
 
             AdminOrderItem previous = existing.get(id);
 
-            System.out.println("DEBUG: previous = " + previous);
-
             int doneQuantity = (previous != null)
                     ? previous.getDoneQuantity()
                     : 0;
-
-            System.out.println("DEBUG: doneQuantity = " + doneQuantity);
 
             AdminOrderItem adminItem = new AdminOrderItem(
                     id,
@@ -128,6 +124,8 @@ public class AdminOrderItemService {
 
         adminOrderItemRepository.saveAll(toSave);
     }
+
+
     public void resetAll() {
         adminOrderItemRepository.deleteAll();
     }

@@ -27,6 +27,6 @@ public class AdminOrderItem {
 
     private Integer quantity;
 
-    @Column(name = "done_quantity")
-    private Integer doneQuantity;
+    @Column(name = "done_quantity", nullable = false)
+    private int doneQuantity;
 }
