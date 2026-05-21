@@ -67,66 +67,67 @@
             </form>
 
         </div>
-        <script>
-            let modified = false;
-            let allowExit = false;
 
-            const form = document.querySelector('form');
-
-            function resetQuantities() {
-
-                const inputs = document.querySelectorAll('input[type="number"]');
-
-                const hasPositiveValue = [...inputs].some(input => {
-                    return parseInt(input.value || 0, 10) > 0;
-                });
-
-                if (hasPositiveValue) {
-                    modified = true;
-                }
-
-                if (!confirm('Mettre toutes les quantités à 0 ?')) {
-                    return;
-                }
-
-                inputs.forEach(input => {
-                    input.value = "";
-                });
-            }
-
-            document.querySelectorAll('input[type="number"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    modified = true;
-                });
-            });
-
-            document.querySelector('.btn-save').addEventListener('click', () => {
-                allowExit = true;
-                modified = false;
-            });
-
-
-            window.addEventListener('beforeunload', function(e) {
-                if (modified && !allowExit) {
-                    e.preventDefault();
-                }
-            });
-
-            document.querySelectorAll('a, button[type="submit"]:not(.btn-save)').forEach(el => {
-                el.addEventListener('click', function(e) {
-                    if (modified ) {
-                        if (!confirm('Vous avez des modifications non enregistrées. Quitter quand même ?')) {
-                            e.preventDefault();
-                        } else {
-                            modified = false;
-                        }
-                    }
-                });
-            });
-
-        </script>
     </section>
 </div>
+<footer th:replace="~{layout/base :: footer}"></footer>
+<script>
+    let modified = false;
+    let allowExit = false;
 
+    const form = document.querySelector('form');
+
+    function resetQuantities() {
+
+        const inputs = document.querySelectorAll('input[type="number"]');
+
+        const hasPositiveValue = [...inputs].some(input => {
+            return parseInt(input.value || 0, 10) > 0;
+        });
+
+        if (hasPositiveValue) {
+            modified = true;
+        }
+
+        if (!confirm('Mettre toutes les quantités à 0 ?')) {
+            return;
+        }
+
+        inputs.forEach(input => {
+            input.value = "";
+        });
+    }
+
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', function() {
+            modified = true;
+        });
+    });
+
+    document.querySelector('.btn-save').addEventListener('click', () => {
+        allowExit = true;
+        modified = false;
+    });
+
+
+    window.addEventListener('beforeunload', function(e) {
+        if (modified && !allowExit) {
+            e.preventDefault();
+        }
+    });
+
+    document.querySelectorAll('a, button[type="submit"]:not(.btn-save)').forEach(el => {
+        el.addEventListener('click', function(e) {
+            if (modified ) {
+                if (!confirm('Vous avez des modifications non enregistrées. Quitter quand même ?')) {
+                    e.preventDefault();
+                } else {
+                    modified = false;
+                }
+            }
+        });
+    });
+
+</script>
 </body>
 </html>

@@ -67,17 +67,18 @@
             </div>
         </div>
 
-        <script>
-            document.getElementById('modalConfirm').addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
-                document.getElementById('modalMessage').textContent = 'Voulez-vous vraiment supprimer ' + button.getAttribute('data-name') + ' ?';
-                document.getElementById('modalForm').action = button.getAttribute('data-action');
-            });
-        </script>
 
     </section>
 </div>
+<footer th:replace="~{layout/base :: footer}"></footer>
 <script>
+
+    document.getElementById('modalConfirm').addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        document.getElementById('modalMessage').textContent = 'Voulez-vous vraiment supprimer ' + button.getAttribute('data-name') + ' ?';
+        document.getElementById('modalForm').action = button.getAttribute('data-action');
+    });
+
     document.querySelectorAll('.checkActive').forEach(cb => {
         cb.addEventListener('change', async (e) => {
 

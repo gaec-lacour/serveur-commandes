@@ -146,17 +146,7 @@
                         <!-- STOCK MODE (READ ONLY) -->
                         <!-- ========================= -->
 
-                        <span th:if="${client.inputMode != 'ORDER'}"
-                              th:text="${quantities[client.id] != null ? quantities[client.id][product.id] : 0}">
-                </span>
-
-                        <!-- ========================= -->
-                        <!-- ORDER MODE (EDITABLE) -->
-                        <!-- ========================= -->
-
-                        <div th:if="${client.inputMode == 'ORDER'}"
-
-                             class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center">
 
                     <span th:text="${quantities[client.id] != null ? quantities[client.id][product.id] : 0}">
                     </span>
@@ -240,5 +230,6 @@
     });
 
 </script>
+<footer th:replace="~{layout/base :: footer}"></footer>
 </body>
 </html>

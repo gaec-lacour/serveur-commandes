@@ -30,4 +30,15 @@ body.admin_page
     background-position-y: 0;
     background-size: 175px;
     padding-top: 50px;
+
 }
+
+.footer {
+    margin-top: 4rem;
+    padding: 1rem;
+    text-align: center;
+    color: #888;
+    font-size: 0.85rem;
+}
+
+
