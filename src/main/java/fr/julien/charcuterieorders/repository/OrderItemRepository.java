@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public interface OrderItemRepository extends JpaRepository <OrderItem, OrderItemId> {
     List<OrderItem> findByUser(User user);
+    List<OrderItem> findByUserId(Long userId);
     void deleteByUser(User user);
     Optional<OrderItem> findByUserIdAndProductId(Long userId, Long productId);
     Optional<OrderItem> findByUserAndProduct(User user, Product product);

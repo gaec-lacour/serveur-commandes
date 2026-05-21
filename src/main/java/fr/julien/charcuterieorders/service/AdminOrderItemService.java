@@ -2,6 +2,7 @@ package fr.julien.charcuterieorders.service;
 
 import fr.julien.charcuterieorders.model.*;
 import fr.julien.charcuterieorders.repository.AdminOrderItemRepository;
+import fr.julien.charcuterieorders.repository.OrderItemRepository;
 import fr.julien.charcuterieorders.repository.ProductRepository;
 import fr.julien.charcuterieorders.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class AdminOrderItemService {
     private final AdminOrderItemRepository adminOrderItemRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public List<AdminOrderItem> getAll() {
         return adminOrderItemRepository.findAll();
@@ -41,6 +43,52 @@ public class AdminOrderItemService {
         item.setQuantity(quantity);
         item.setDoneQuantity(doneQuantity);
         adminOrderItemRepository.save(item);
+    }
+
+    public void syncByUser(Long userId) {
+
+        Map<OrderItemId, AdminOrderItem> existing =
+                adminOrderItemRepository.findAll()
+                        .stream()
+                        .collect(Collectors.toMap(
+                                AdminOrderItem::getId,
+                                Function.identity()
+                        ));
+
+        List<AdminOrderItem> toSave = new ArrayList<>();
+
+        List<OrderItem> userItems = orderItemRepository.findByUserId(userId);
+
+        for (OrderItem item : userItems) {
+
+            OrderItemId id = new OrderItemId(
+                    item.getUser().getId(),
+                    item.getProduct().getId()
+            );
+
+            AdminOrderItem previous = existing.get(id);
+
+            System.out.println("DEBUG: previous = " + previous);
+
+            int doneQuantity = (previous != null)
+                    ? previous.getDoneQuantity()
+                    : 0;
+
+            System.out.println("DEBUG: doneQuantity = " + doneQuantity);
+
+            AdminOrderItem adminItem = new AdminOrderItem(
+                    id,
+                    item.getUser(),
+                    item.getProduct(),
+                    item.getQuantity(),
+                    doneQuantity
+            );
+
+            toSave.add(adminItem);
+        }
+
+        adminOrderItemRepository.saveAll(toSave);
+
     }
     public void syncFromOrderItems(List<OrderItem> orderItems) {
 

@@ -3,10 +3,7 @@ package fr.julien.charcuterieorders.controller.admin;
 import fr.julien.charcuterieorders.model.OrderItem;
 import fr.julien.charcuterieorders.model.Product;
 import fr.julien.charcuterieorders.model.User;
-import fr.julien.charcuterieorders.service.OrderItemService;
-import fr.julien.charcuterieorders.service.OrderService;
-import fr.julien.charcuterieorders.service.ProductService;
-import fr.julien.charcuterieorders.service.UserService;
+import fr.julien.charcuterieorders.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +28,7 @@ public class AdminOrderEditController {
     private final UserService userService;
     private final ProductService productService;
     private final OrderItemService orderItemService;
+    private final AdminOrderItemService adminOrderItemService;
 
 
     @GetMapping("/{id}")
@@ -105,7 +103,7 @@ public class AdminOrderEditController {
             orderItemService.saveOrUpdate(user, product, quantity);
         });
 
-        orderService.createOrder(user);
+        adminOrderItemService.syncByUser(id);
 
         redirectAttributes.addFlashAttribute("success", "Commande enregistrée");
 

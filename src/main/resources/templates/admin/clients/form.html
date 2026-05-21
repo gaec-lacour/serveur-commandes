@@ -16,8 +16,6 @@
                 <a class="btn btn-danger" th:href="@{/admin/clients}">Annuler</a>
             </div>
 
-
-
             <label for="name">Nom</label>
             <input id="name" type="text" name="name" th:value="${client.name}" placeholder="Nom"/>
 
@@ -25,10 +23,10 @@
             <input id="login" type="text" name="login" th:value="${client.login}" placeholder="Login"/>
 
             <label for="email">Email</label>
-            <input id="email" type="email" name="email" th:value="${client.email}" placeholder="Email"/>
+            <input id="email" type="email" name="email" autocomplete="off" th:value="${client.email}" placeholder="Email"/>
 
             <label for="password">Mot de passe</label>
-            <input id="password" type="password" name="password" placeholder="Mot de passe (laisser vide pour ne pas changer)"/>
+            <input id="password" type="password" name="password" autocomplete="off" placeholder="Mot de passe (laisser vide pour ne pas changer)"/>
 
             <fieldset>
                 <legend>Sélectionnez le mode de saisie&nbsp;:</legend>

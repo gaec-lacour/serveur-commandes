@@ -1,14 +1,13 @@
 package fr.julien.charcuterieorders.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 // model/AdminOrderItem.java
 @Entity
 @Table(name = "admin_order_items")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminOrderItem {
