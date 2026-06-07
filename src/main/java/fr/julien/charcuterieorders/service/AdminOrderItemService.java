@@ -32,6 +32,7 @@ public class AdminOrderItemService {
         OrderItemId id = new OrderItemId(userId, productId);
 
         if (quantity == 0) {
+
             adminOrderItemRepository.deleteById(id);
             return;
         }

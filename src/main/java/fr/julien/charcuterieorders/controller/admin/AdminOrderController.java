@@ -113,9 +113,11 @@ public class AdminOrderController {
     }
 
     @PostMapping
-    public String store(@ModelAttribute OrderForm form, RedirectAttributes redirectAttributes) {
+    public ResponseEntity<Void> store(@RequestBody List<OrderLineForm> items) {
 
-        for (OrderLineForm item : form.getItems()) {
+        items.forEach(System.out::println);
+
+        for (OrderLineForm item : items) {
             adminOrderItemService.saveOrUpdate(
                     item.getUserId(),
                     item.getProductId(),
@@ -124,9 +126,7 @@ public class AdminOrderController {
             );
         }
 
-        redirectAttributes.addFlashAttribute("success", "Modifications enregistrées");
-
-        return "redirect:/admin/commandes";
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/sync")

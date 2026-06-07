@@ -44,7 +44,7 @@
                 </form>
 
                 <button type="submit"
-                        form="saveForm"
+                        id="saveBtn"
                         class="btn btn-primary btn-save"
                         style="height: 59px;">
                     Enregistrer
@@ -83,10 +83,7 @@
         </div>
 
         <!-- FORM SAVE GLOBAL -->
-        <form id="saveForm"
-              method="post"
-              th:action="@{/admin/commandes}"
-              th:object="${orderForm}">
+        <form id="saveForm">
 
             <input type="hidden"
                    th:name="${_csrf.parameterName}"
@@ -180,6 +177,58 @@
     let modified = false;
     let allowExit = false;
 
+    const csrfToken =
+        document.querySelector('meta[name="_csrf"]').content;
+
+    const csrfHeader =
+        document.querySelector('meta[name="_csrf_header"]').content;
+
+    function collectItems() {
+        const rows = document.querySelectorAll("tbody tr");
+
+        const items = [];
+
+        rows.forEach(row => {
+            const productId = row.querySelector("input[name$='productId']").value;
+
+            row.querySelectorAll("td").forEach(cell => {
+
+                const userIdEl = cell.querySelector("input[name$='userId']");
+                const quantityEl = cell.querySelector("input[name$='quantity']");
+                const doneEl = cell.querySelector("input[name$='doneQuantity']");
+
+                if (!userIdEl) return;
+
+                items.push({
+                    userId: userIdEl.value,
+                    productId: productId,
+                    quantity: quantityEl?.value ?? 0,
+                    doneQuantity: doneEl?.value ?? 0
+                });
+            });
+        });
+
+        return items;
+    }
+
+    async function submitOrders() {
+        const items = collectItems();
+
+        const response = await fetch('/admin/commandes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify(items)
+        });
+
+        console.log(response);
+        if (response.ok) {
+            location.reload();
+        }
+    }
+
 
     document.addEventListener('input', (e) => {
         if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'number') {
@@ -198,9 +247,10 @@
         });
     });
 
-    document.querySelectorAll('.btn-save').forEach(el => {
-        el.addEventListener('click', () => {
+    document.querySelectorAll('.btn-save').forEach(button => {
+        button.addEventListener('click', async () => {
             allowExit = true;
+            await submitOrders();
         });
     });
 
