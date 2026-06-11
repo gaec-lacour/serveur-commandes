@@ -148,4 +148,17 @@ public class AdminOrderController {
 
         return "redirect:/admin/commandes";
     }
+
+    @PostMapping("/item")
+    public ResponseEntity<Void> saveItem(@RequestBody OrderLineForm item) {
+
+        adminOrderItemService.saveOrUpdate(
+                item.getUserId(),
+                item.getProductId(),
+                item.getQuantity(),
+                item.getDoneQuantity()
+        );
+
+        return ResponseEntity.ok().build();
+    }
 }

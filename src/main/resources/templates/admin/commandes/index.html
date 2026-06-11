@@ -43,18 +43,6 @@
                     </button>
                 </form>
 
-                <button type="submit"
-                        id="saveBtn"
-                        class="btn btn-primary btn-save"
-                        style="height: 59px;">
-                    Enregistrer
-                </button>
-
-                <button class="btn btn-warning btn-cancel"
-                        style="height: 59px;">
-                    Annuler
-                </button>
-
                 <a class="btn btn-primary btn-export"
                    style="height: 59px"
                    th:href="@{/admin/commandes/export}">
@@ -174,8 +162,6 @@
 
 <script>
 
-    let modified = false;
-    let allowExit = false;
 
     const csrfToken =
         document.querySelector('meta[name="_csrf"]').content;
@@ -183,101 +169,42 @@
     const csrfHeader =
         document.querySelector('meta[name="_csrf_header"]').content;
 
-    function collectItems() {
-        const rows = document.querySelectorAll("tbody tr");
+    document.querySelectorAll("input[name$='doneQuantity']")
+        .forEach(input => {
 
-        const items = [];
-
-        rows.forEach(row => {
-            const productId = row.querySelector("input[name$='productId']").value;
-
-            row.querySelectorAll("td").forEach(cell => {
-
-                const userIdEl = cell.querySelector("input[name$='userId']");
-                const quantityEl = cell.querySelector("input[name$='quantity']");
-                const doneEl = cell.querySelector("input[name$='doneQuantity']");
-
-                if (!userIdEl) return;
-
-                items.push({
-                    userId: userIdEl.value,
-                    productId: productId,
-                    quantity: quantityEl?.value ?? 0,
-                    doneQuantity: doneEl?.value ?? 0
-                });
+            input.addEventListener("change", async () => {
+                await saveDoneQuantity(input);
             });
+
         });
 
-        return items;
-    }
+    async function saveDoneQuantity(input) {
 
-    async function submitOrders() {
-        const items = collectItems();
+        const row = input.closest("tr");
+        const cell = input.closest("td");
 
-        const response = await fetch('/admin/commandes', {
+        const productId = row.querySelector("input[name$='productId']").value;
+        const userId = cell.querySelector("input[name$='userId']").value;
+        const quantity = cell.querySelector("input[name$='quantity']").value;
+
+        const item = {
+            userId,
+            productId,
+            quantity,
+            doneQuantity: input.value
+        };
+
+        await fetch('/admin/commandes/item', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 [csrfHeader]: csrfToken
             },
-            body: JSON.stringify(items)
+            body: JSON.stringify(item)
         });
-
-        console.log(response);
-        if (response.ok) {
-            location.reload();
-        }
     }
 
 
-    document.addEventListener('input', (e) => {
-        if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'number') {
-            modified = true;
-        }
-    });
-
-    document.querySelector('.btn-cancel').addEventListener('click', () => {
-        allowExit = true;
-        location.reload();
-    });
-
-    document.querySelectorAll('.btn-change').forEach(el => {
-        el.addEventListener('click', () => {
-            allowExit = true;
-        });
-    });
-
-    document.querySelectorAll('.btn-save').forEach(button => {
-        button.addEventListener('click', async () => {
-            allowExit = true;
-            await submitOrders();
-        });
-    });
-
-    window.addEventListener('beforeunload', (e) => {
-        if (modified && !allowExit) {
-            e.preventDefault();
-            e.returnValue = '';
-        }
-    });
-
-    document.querySelectorAll('a, button:not(.btn-save):not(.btn-cancel):not(.btn-change)').forEach(el => {
-        el.addEventListener('click', function (e) {
-            if (!modified) return;
-
-            let message = 'Vous avez des modifications non enregistrées. Quitter quand même ?';
-
-            if (el.classList.contains('btn-export')) {
-                message = "Le document n'a pas été enregistré, les données exportées ne seront pas à jour. Exporter quand même ?";
-            }
-
-            if (!confirm(message)) {
-                e.preventDefault();
-            } else {
-                allowExit = true;
-            }
-        });
-    });
 
 </script>
 <footer th:replace="~{layout/base :: footer}"></footer>
