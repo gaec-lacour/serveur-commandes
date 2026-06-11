@@ -41,4 +41,11 @@ body.admin_page
     font-size: 0.85rem;
 }
 
+.table thead th {
+    position: sticky;
+    top: 0px;
+    z-index: 10;
+    background: white;
+}
+
 
